@@ -27,10 +27,7 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
 // Load data from hours-of-tv-watched.csv
-d3.csv("../data/data.csv").then(function(data) {
-
-  // Print the tvData
-  console.log(data);
+d3.csv("assets/data/data.csv").then(function(data) {
 
   var width = 500;
     var height = 500;
@@ -42,22 +39,27 @@ d3.csv("../data/data.csv").then(function(data) {
         left: 40
     };
 
-    var x = d3.scale.linear().range([0, width]);
-    var y = d3.scale.linear().range([height, 0]);
+    data.sort(function (a, b) {
+      return a.poverty - b.poverty
+    });
 
-    var minX = _(data).orderBy('x').first().poverty;
-    var maxX = _(data).orderBy('x').last().poverty;
+    console.log(data);
 
-    x.domain([minX - 500, maxX + 500]);
-    y.domain([0, 100]);
+    var minX = data[0].poverty;
+    var maxX = data[data.length - 1].poverty;
+    console.log(minX, maxX)
 
-    var xAxis = d3.svg.axis()
+    var x = d3.scaleLinear().domain([-maxX, maxX]).range([0,width])
+    var y = d3.scaleLinear().domain([-30,30]).range([height,0])
+
+    // var x = d3.scale.linear().range([0, width]);
+    // var y = d3.scale.linear().range([height, 0]);
+
+    var xAxis = d3.axisBottom()
             .scale(x)
-            .orient("bottom");
 
-    var yAxis = d3.svg.axis()
+    var yAxis = d3.axisLeft()
             .scale(y)
-            .orient("left");
 
     var svg = d3
             .select("#d3")
